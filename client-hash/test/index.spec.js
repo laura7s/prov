@@ -6,6 +6,9 @@ const removeSpecialCharactersFromString = require("../index.js")
   .removeSpecialCharactersFromString;
 const removeDataBetweenHTMLTags = require("../index.js")
   .removeDataBetweenHTMLTags;
+const removeLeadingCapsString = require("../index.js").removeLeadingCapsString;
+const removeTrailingCapsString = require("../index.js")
+  .removeTrailingCapsString;
 
 describe("data cleaners", () => {
   describe("removeHTMLFromString", () => {
@@ -63,6 +66,42 @@ describe("data cleaners", () => {
       expect(
         removeDataBetweenHTMLTags("hello <damn>yooooo</damn>world")
       ).to.equal("hello world");
+    });
+  });
+
+  describe("removeLeadingCapsString", () => {
+    it("removes the leading string that has a small case letter followed by a capital letter", () => {
+      expect(
+        removeLeadingCapsString("Hello WorldThis is a new sentence")
+      ).to.equal("This is a new sentence");
+    });
+
+    it("only works once", () => {
+      expect(
+        removeLeadingCapsString("Hello WorldThis is a new sentenceHello")
+      ).to.equal("This is a new sentenceHello");
+    });
+
+    it("does not crash if nothing is found", () => {
+      expect(removeLeadingCapsString("Hello world")).to.equal("Hello world");
+    });
+  });
+
+  describe("removeTrailingCapsString", () => {
+    it("removes the end of a string with small-caps letters", () => {
+      expect(removeTrailingCapsString("Hello worldThis stuff")).to.equal(
+        "Hello world"
+      );
+    });
+
+    it("only does it once", () => {
+      expect(removeTrailingCapsString("DudeHello worldThis stuff")).to.equal(
+        "DudeHello world"
+      );
+    });
+
+    it("does not crash if nothing is found", () => {
+      expect(removeTrailingCapsString("Hello world")).to.equal("Hello world");
     });
   });
 });

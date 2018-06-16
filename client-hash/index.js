@@ -32,8 +32,8 @@ const getHashForData = data => {
 
 const getArticle = url => getMercuryData(createMercuryURL(url));
 
-const logIntermediateStep = result => {
-  console.log(result);
+const makeLogIntermediateStep = text => result => {
+  console.log(text + ": ", result);
   return result;
 };
 
@@ -44,7 +44,8 @@ const getHashForUrl = url =>
     .then(removeDataBetweenHTMLTags)
     .then(removeHTMLFromString)
     .then(removeSpecialCharactersFromString)
-    .then(logIntermediateStep)
+    .then(trimString)
+    .then(makeLogIntermediateStep("Cleaned text"))
     .then(getHashForData)
     .then(hash => {
       console.log("The article hash: ", hash);
@@ -55,12 +56,31 @@ const getHashForUrl = url =>
     });
 
 const removeHTMLFromString = articleData =>
-  articleData.replace(/<\/?[^>]+(>|$)/g, "").trim();
+  articleData.replace(/<\/?[^>]+(>|$)/g, "");
 
 const removeSpecialCharactersFromString = articleData => {
   const regex = /\&[^\s]*;/g;
-
   return articleData.replace(regex, "");
+};
+
+const removeLeadingCapsString = articleData => {
+  const matches = articleData.match(/[a-z][A-Z]/gm, "");
+  if (!matches || matches.length === 0) {
+    return articleData;
+  }
+  const [firstMatch] = matches;
+  const index = articleData.indexOf(firstMatch);
+  return articleData.slice(index).slice(1);
+};
+
+const removeTrailingCapsString = articleData => {
+  const matches = articleData.match(/[a-z][A-Z]/gm, "");
+  if (!matches || matches.length === 0) {
+    return articleData;
+  }
+  const lastMatch = matches[matches.length - 1];
+  const index = articleData.indexOf(lastMatch);
+  return articleData.slice(0, index) + articleData[index];
 };
 
 const removeDataBetweenHTMLTags = articleData =>
@@ -72,6 +92,8 @@ const removeDataBetweenHTMLTags = articleData =>
       ),
     articleData
   );
+
+const trimString = string => string.trim();
 
 const main = () => {
   Promise.all([getHashForUrl(EXAMPLE_URL), getHashForUrl(OTHER_URL)]).then(
@@ -86,5 +108,7 @@ main();
 module.exports = {
   removeHTMLFromString,
   removeSpecialCharactersFromString,
-  removeDataBetweenHTMLTags
+  removeDataBetweenHTMLTags,
+  removeLeadingCapsString,
+  removeTrailingCapsString
 };
