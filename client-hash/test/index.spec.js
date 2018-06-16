@@ -9,6 +9,7 @@ const removeDataBetweenHTMLTags = require("../index.js")
 const removeLeadingCapsString = require("../index.js").removeLeadingCapsString;
 const removeTrailingCapsString = require("../index.js")
   .removeTrailingCapsString;
+const makeRemoveCharacter = require("../index.js").makeRemoveCharacter;
 
 describe("data cleaners", () => {
   describe("removeHTMLFromString", () => {
@@ -102,6 +103,13 @@ describe("data cleaners", () => {
 
     it("does not crash if nothing is found", () => {
       expect(removeTrailingCapsString("Hello world")).to.equal("Hello world");
+    });
+  });
+
+  describe("makeRemoveCharacter", () => {
+    it("removes a character", () => {
+      expect(makeRemoveCharacter("a")("asdf")).to.equal("sdf");
+      expect(makeRemoveCharacter(" ")("as df")).to.equal("asdf");
     });
   });
 });

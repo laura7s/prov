@@ -44,6 +44,11 @@ const getHashForUrl = url =>
     .then(removeDataBetweenHTMLTags)
     .then(removeHTMLFromString)
     .then(removeSpecialCharactersFromString)
+    .then(removeLeadingCapsString)
+    .then(removeTrailingCapsString)
+    .then(makeRemoveCharacter("("))
+    .then(makeRemoveCharacter(")"))
+    .then(makeRemoveCharacter(" "))
     .then(trimString)
     .then(makeLogIntermediateStep("Cleaned text"))
     .then(getHashForData)
@@ -55,43 +60,45 @@ const getHashForUrl = url =>
       console.log("Oops! an error occured", error);
     });
 
-const removeHTMLFromString = articleData =>
-  articleData.replace(/<\/?[^>]+(>|$)/g, "");
+const removeHTMLFromString = string => string.replace(/<\/?[^>]+(>|$)/g, "");
 
-const removeSpecialCharactersFromString = articleData => {
+const removeSpecialCharactersFromString = string => {
   const regex = /\&[^\s]*;/g;
-  return articleData.replace(regex, "");
+  return string.replace(regex, "");
 };
 
-const removeLeadingCapsString = articleData => {
-  const matches = articleData.match(/[a-z][A-Z]/gm, "");
+const removeLeadingCapsString = string => {
+  const matches = string.match(/[a-z][A-Z]/gm, "");
   if (!matches || matches.length === 0) {
-    return articleData;
+    return string;
   }
   const [firstMatch] = matches;
-  const index = articleData.indexOf(firstMatch);
-  return articleData.slice(index).slice(1);
+  const index = string.indexOf(firstMatch);
+  return string.slice(index).slice(1);
 };
 
-const removeTrailingCapsString = articleData => {
-  const matches = articleData.match(/[a-z][A-Z]/gm, "");
+const removeTrailingCapsString = string => {
+  const matches = string.match(/[a-z][A-Z]/gm, "");
   if (!matches || matches.length === 0) {
-    return articleData;
+    return string;
   }
   const lastMatch = matches[matches.length - 1];
-  const index = articleData.indexOf(lastMatch);
-  return articleData.slice(0, index) + articleData[index];
+  const index = string.indexOf(lastMatch);
+  return string.slice(0, index) + string[index];
 };
 
-const removeDataBetweenHTMLTags = articleData =>
+const removeDataBetweenHTMLTags = string =>
   UNALLOWED_HTML_TAGS.reduce(
     (accumulator, tagToRemove) =>
       accumulator.replace(
         new RegExp("<" + tagToRemove + ".*>.*?</" + tagToRemove + ">", "g"),
         ""
       ),
-    articleData
+    string
   );
+
+const makeRemoveCharacter = character => string =>
+  string.replace(character, "");
 
 const trimString = string => string.trim();
 
@@ -110,5 +117,6 @@ module.exports = {
   removeSpecialCharactersFromString,
   removeDataBetweenHTMLTags,
   removeLeadingCapsString,
-  removeTrailingCapsString
+  removeTrailingCapsString,
+  makeRemoveCharacter
 };
