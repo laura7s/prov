@@ -68,24 +68,35 @@ const removeSpecialCharactersFromString = string => {
 };
 
 const removeLeadingCapsString = string => {
-  const matches = string.match(/[a-z][A-Z]/gm, "");
+  const newString = string.slice();
+  const matches = newString.match(/[a-z][A-Z]/gm, "");
   if (!matches || matches.length === 0) {
     return string;
   }
   const [firstMatch] = matches;
-  const index = string.indexOf(firstMatch);
-  return string.slice(index).slice(1);
+  const index = newString.indexOf(firstMatch);
+  return removeReasonableAmountOfString(
+    newString.slice(index).slice(1),
+    string
+  );
 };
 
 const removeTrailingCapsString = string => {
-  const matches = string.match(/[a-z][A-Z]/gm, "");
+  const newString = string.slice();
+  const matches = newString.match(/[a-z][A-Z]/gm, "");
   if (!matches || matches.length === 0) {
     return string;
   }
   const lastMatch = matches[matches.length - 1];
-  const index = string.indexOf(lastMatch);
-  return string.slice(0, index) + string[index];
+  const index = newString.indexOf(lastMatch);
+  return removeReasonableAmountOfString(
+    newString.slice(0, index) + newString[index],
+    string
+  );
 };
+
+const removeReasonableAmountOfString = (newString, oldString) =>
+  newString.length / oldString.length > 0.8 ? newString : oldString;
 
 const removeDataBetweenHTMLTags = string =>
   UNALLOWED_HTML_TAGS.reduce(

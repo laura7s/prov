@@ -72,37 +72,45 @@ describe("data cleaners", () => {
 
   describe("removeLeadingCapsString", () => {
     it("removes the leading string that has a small case letter followed by a capital letter", () => {
-      expect(
-        removeLeadingCapsString("Hello WorldThis is a new sentence")
-      ).to.equal("This is a new sentence");
+      expect(removeLeadingCapsString("WorldThis is a new sentence")).to.equal(
+        "This is a new sentence"
+      );
     });
 
     it("only works once", () => {
       expect(
-        removeLeadingCapsString("Hello WorldThis is a new sentenceHello")
+        removeLeadingCapsString("WorldThis is a new sentenceHello")
       ).to.equal("This is a new sentenceHello");
     });
 
     it("does not crash if nothing is found", () => {
       expect(removeLeadingCapsString("Hello world")).to.equal("Hello world");
     });
+
+    it("does not remove a huge part of the string", () => {
+      expect(removeLeadingCapsString("HelloWorld")).to.equal("HelloWorld");
+    });
   });
 
   describe("removeTrailingCapsString", () => {
     it("removes the end of a string with small-caps letters", () => {
-      expect(removeTrailingCapsString("Hello worldThis stuff")).to.equal(
-        "Hello world"
+      expect(removeTrailingCapsString("Hello world mah dudeThis")).to.equal(
+        "Hello world mah dude"
       );
     });
 
     it("only does it once", () => {
-      expect(removeTrailingCapsString("DudeHello worldThis stuff")).to.equal(
-        "DudeHello world"
-      );
+      expect(
+        removeTrailingCapsString("DudeHello world and other thingsThis")
+      ).to.equal("DudeHello world and other things");
     });
 
     it("does not crash if nothing is found", () => {
       expect(removeTrailingCapsString("Hello world")).to.equal("Hello world");
+    });
+
+    it("does not remove a huge part of the string", () => {
+      expect(removeTrailingCapsString("HelloWorld")).to.equal("HelloWorld");
     });
   });
 
