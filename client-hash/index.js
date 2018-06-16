@@ -72,12 +72,15 @@ const removeDataBetweenHTMLTags = articleData =>
     articleData
   );
 
-let hash1;
-Promise.all([getHashForUrl(EXAMPLE_URL), getHashForUrl(OTHER_URL)]).then(
-  hashes => {
-    console.log("are the hashes equal ?", hashes[0] === hashes[1]);
-  }
-);
+const main = () => {
+  Promise.all([getHashForUrl(EXAMPLE_URL), getHashForUrl(OTHER_URL)]).then(
+    hashes => {
+      console.log("are the hashes equal ?", hashes[0] === hashes[1]);
+    }
+  );
+};
+
+main();
 
 module.exports = {
   removeHTMLFromString,
