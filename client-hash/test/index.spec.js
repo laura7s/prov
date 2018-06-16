@@ -72,15 +72,17 @@ describe("data cleaners", () => {
 
   describe("removeLeadingCapsString", () => {
     it("removes the leading string that has a small case letter followed by a capital letter", () => {
-      expect(removeLeadingCapsString("WorldThis is a new sentence")).to.equal(
-        "This is a new sentence"
-      );
+      expect(
+        removeLeadingCapsString(
+          "World clubThis is a new sentence with no issues and stuff"
+        )
+      ).to.equal("This is a new sentence with no issues and stuff");
     });
 
     it("only works once", () => {
       expect(
-        removeLeadingCapsString("WorldThis is a new sentenceHello")
-      ).to.equal("This is a new sentenceHello");
+        removeLeadingCapsString("WorldThis is a new sentenceHello dude")
+      ).to.equal("This is a new sentenceHello dude");
     });
 
     it("does not crash if nothing is found", () => {
@@ -94,14 +96,14 @@ describe("data cleaners", () => {
 
   describe("removeTrailingCapsString", () => {
     it("removes the end of a string with small-caps letters", () => {
-      expect(removeTrailingCapsString("Hello world mah dudeThis")).to.equal(
-        "Hello world mah dude"
-      );
+      expect(
+        removeTrailingCapsString("Hello world mah dude and companyThis is")
+      ).to.equal("Hello world mah dude and company");
     });
 
     it("only does it once", () => {
       expect(
-        removeTrailingCapsString("DudeHello world and other thingsThis")
+        removeTrailingCapsString("DudeHello world and other thingsThis is")
       ).to.equal("DudeHello world and other things");
     });
 
@@ -111,6 +113,22 @@ describe("data cleaners", () => {
 
     it("does not remove a huge part of the string", () => {
       expect(removeTrailingCapsString("HelloWorld")).to.equal("HelloWorld");
+    });
+
+    it("does not remove trailing things that are a single word, to avoid removing McCain", () => {
+      expect(
+        removeTrailingCapsString("This article was written by McCain")
+      ).to.equal("This article was written by McCain");
+    });
+
+    it("works for this edge case", () => {
+      expect(
+        removeTrailingCapsString(
+          "Some dummy text in front of this Cohen has admitted making the payment, but Trump has denied the encounter with Daniels. Reportingby Brendan Pierson in New York; editing by David Gregorio and Grant McCoolOur Standards:The Thomson Reuters Trust Principles."
+        )
+      ).to.equal(
+        "Some dummy text in front of this Cohen has admitted making the payment, but Trump has denied the encounter with Daniels. Reportingby Brendan Pierson in New York; editing by David Gregorio and Grant McCool"
+      );
     });
   });
 
@@ -127,6 +145,13 @@ describe("data cleaners", () => {
     it("removes special characters", () => {
       expect(makeRemoveCharacter("\\(")("as(df")).to.equal("asdf");
       expect(makeRemoveCharacter("\\(")("as(d(f")).to.equal("asdf");
+    });
+
+    it("removes returns", () => {
+      expect(
+        makeRemoveCharacter("\\n")(`as
+df`)
+      ).to.equal("asdf");
     });
   });
 });
