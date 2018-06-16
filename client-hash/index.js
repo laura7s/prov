@@ -37,29 +37,6 @@ const makeLogIntermediateStep = text => result => {
   return result;
 };
 
-const getHashForUrl = url =>
-  getArticle(url)
-    .then(result => result.json())
-    .then(result => result.content)
-    .then(removeDataBetweenHTMLTags)
-    .then(removeHTMLFromString)
-    .then(removeSpecialCharactersFromString)
-    .then(removeLeadingCapsString)
-    .then(removeTrailingCapsString)
-    .then(makeRemoveCharacter("("))
-    .then(makeRemoveCharacter(")"))
-    .then(makeRemoveCharacter(" "))
-    .then(trimString)
-    .then(makeLogIntermediateStep("Cleaned text"))
-    .then(getHashForData)
-    .then(hash => {
-      console.log("The article hash: ", hash);
-      return hash;
-    })
-    .catch(error => {
-      console.log("Oops! an error occured", error);
-    });
-
 const removeHTMLFromString = string => string.replace(/<\/?[^>]+(>|$)/g, "");
 
 const removeSpecialCharactersFromString = string => {
@@ -109,17 +86,39 @@ const removeDataBetweenHTMLTags = string =>
   );
 
 const makeRemoveCharacter = character => string =>
-  string.replace(character, "");
+  string.replace(new RegExp("" + character + "", "g"), "");
 
 const trimString = string => string.trim();
 
-const main = () => {
+const getHashForUrl = url =>
+  getArticle(url)
+    .then(result => result.json())
+    .then(result => result.content)
+    .then(removeDataBetweenHTMLTags)
+    .then(removeHTMLFromString)
+    .then(removeSpecialCharactersFromString)
+    .then(removeLeadingCapsString)
+    .then(removeTrailingCapsString)
+    .then(makeRemoveCharacter("\\)"))
+    .then(makeRemoveCharacter("\\("))
+    .then(makeRemoveCharacter(" "))
+    .then(trimString)
+    .then(makeLogIntermediateStep("Cleaned text"))
+    .then(getHashForData)
+    .then(hash => {
+      console.log("The article hash: ", hash);
+      return hash;
+    })
+    .catch(error => {
+      console.log("Oops! an error occured", error);
+    });
+
+const main = () =>
   Promise.all([getHashForUrl(EXAMPLE_URL), getHashForUrl(OTHER_URL)]).then(
     hashes => {
       console.log("are the hashes equal ?", hashes[0] === hashes[1]);
     }
   );
-};
 
 main();
 

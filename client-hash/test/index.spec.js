@@ -119,5 +119,14 @@ describe("data cleaners", () => {
       expect(makeRemoveCharacter("a")("asdf")).to.equal("sdf");
       expect(makeRemoveCharacter(" ")("as df")).to.equal("asdf");
     });
+
+    it("removes a character multiple times", () => {
+      expect(makeRemoveCharacter(" ")("as d f")).to.equal("asdf");
+    });
+
+    it("removes special characters", () => {
+      expect(makeRemoveCharacter("\\(")("as(df")).to.equal("asdf");
+      expect(makeRemoveCharacter("\\(")("as(d(f")).to.equal("asdf");
+    });
   });
 });
