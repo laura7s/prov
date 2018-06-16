@@ -5,6 +5,11 @@ const MERCURY_END_POINT = "https://mercury.postlight.com";
 const SECRET = "abcdefg";
 const UNALLOWED_HTML_TAGS = ["figcaption", "damn"];
 
+const EXAMPLE_URL =
+  "https://www.yahoo.com/news/flooding-possible-u-southwest-where-wildfires-scorch-earth-072723370.html";
+const OTHER_URL =
+  "https://www.reuters.com/article/us-usa-wildfires/flooding-possible-in-u-s-southwest-where-wildfires-scorch-earth-idUSKBN1JC062";
+
 const createMercuryURL = url => MERCURY_END_POINT + "/parser?url=" + url;
 
 const getMercuryData = mercuryUrl => {
@@ -27,23 +32,19 @@ const getHashForData = data => {
 
 const getArticle = url => getMercuryData(createMercuryURL(url));
 
-const EXAMPLE_URL =
-  "https://www.yahoo.com/news/flooding-possible-u-southwest-where-wildfires-scorch-earth-072723370.html";
-const OTHER_URL =
-  "https://www.reuters.com/article/us-usa-wildfires/flooding-possible-in-u-s-southwest-where-wildfires-scorch-earth-idUSKBN1JC062";
+const logIntermediateStep = result => {
+  console.log(result);
+  return result;
+};
 
 const getHashForUrl = url =>
   getArticle(url)
     .then(result => result.json())
     .then(result => result.content)
-    // .then(console.log)
     .then(removeDataBetweenHTMLTags)
     .then(removeHTMLFromString)
     .then(removeSpecialCharactersFromString)
-    .then(result => {
-      console.log(result);
-      return result;
-    })
+    .then(logIntermediateStep)
     .then(getHashForData)
     .then(hash => {
       console.log("The article hash: ", hash);
