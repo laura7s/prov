@@ -7,7 +7,8 @@ const {
   removeDataBetweenHTMLTags,
   removeLeadingCapsString,
   removeTrailingCapsString,
-  makeRemoveCharacter
+  makeRemoveCharacter,
+  compareBowRepresentations
 } = require("../utils.js");
 
 describe("data cleaners", () => {
@@ -158,5 +159,11 @@ describe("data cleaners", () => {
 df`)
       ).to.equal("asdf");
     });
+  });
+
+  describe("compareBowRepresentations", () => {
+    expect(compareBowRepresentations([{ hello: 1 }], [{ hello: 1 }])).to.equal(
+      1
+    );
   });
 });

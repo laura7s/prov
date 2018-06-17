@@ -1,5 +1,7 @@
-require("isomorphic-fetch");
-const crypto = require("crypto");
+import "isomorphic-fetch";
+import { sjcl } from "./sjcl.js";
+import { bow, dict } from "./bow.js";
+import { bagOfWords } from "textmining";
 
 const MERCURY_END_POINT = "https://mercury.postlight.com";
 const UNALLOWED_HTML_TAGS = ["figcaption", "damn"];
@@ -15,11 +17,11 @@ const getMercuryData = mercuryUrl =>
     }
   });
 
-const getHashForData = data =>
-  crypto
-    .createHash("sha256")
-    .update(data)
-    .digest("hex");
+const getHashForData = data => {
+  var bitArray = sjcl.hash.sha256.hash(data);
+  var digest_sha256 = sjcl.codec.hex.fromBits(bitArray);
+  return digest_sha256;
+};
 
 const getArticle = url => getMercuryData(createMercuryURL(url));
 
@@ -102,41 +104,60 @@ const removeEverythingButAlphanumeric = string => string.replace(/\W/g, "");
 
 const trimString = string => string.trim();
 
-const getHashForUrl = url =>
+const compareStrings = (original, newString) => {
+  const voc = dict([original]);
+  const bow1 = bow(original, voc);
+  const bow2 = bow(newString, voc);
+  const distance = distanceBetween2Vectors(bow1, bow2);
+  console.log("Difference?: ", distance);
+};
+
+const squareDifference = (a, b) => Math.pow(a - b, 2);
+
+const squareDifferenceArray = (arrayA, arrayB) =>
+  arrayA.reduce(
+    (acc, val, index) => acc + squareDifference(val, arrayB[index]),
+    0
+  );
+
+const sumProduct = (arrayA, arrayB) =>
+  arrayA.reduce((acc, val, index) => acc + val * arrayB[index], 0);
+
+const vectorLength = vector =>
+  Math.sqrt(vector.reduce((acc, val) => acc + Math.pow(val, 2), 0));
+
+const distanceBetween2Vectors = (arrayA, arrayB) =>
+  sumProduct(arrayA, arrayB) / (vectorLength(arrayA) * vectorLength(arrayB));
+
+const getArticleStringForUrl = url =>
   getArticle(url)
     .then(result => result.json())
     .then(result => result.content)
     .then(removeDataBetweenHTMLTags)
     .then(removeHTMLFromString)
-    .then(removeSpecialCharactersFromString)
-    // .then(makeLogIntermediateStep("Cleaned html"))
-    .then(trimString)
-    .then(removeLeadingCapsString)
-    .then(trimString)
-    .then(removeTrailingCapsString)
-    // .then(makeRemoveCharacter("\\)"))
-    // .then(makeRemoveCharacter("\\("))
-    // .then(makeRemoveCharacter(" "))
-    .then(makeRemoveCharacter("\\n"))
-    // .then(makeRemoveCharacter(";"))
-    .then(removeEverythingButAlphanumeric)
-    .then(trimString)
-    .then(makeLogIntermediateStep("Cleaned text"))
-    .then(getHashForData)
-    .then(hash => {
-      console.log("The article hash: ", hash);
-      return hash;
-    })
-    .catch(error => {
-      console.log("Oops! an error occured", error);
-    });
+    .then(removeSpecialCharactersFromString);
+// .then(console.log);
+// .then(makeLogIntermediateStep("Cleaned html"))
+// .then(trimString)
+// .then(removeLeadingCapsString)
+// .then(trimString)
+// .then(removeTrailingCapsString)
+// .then(makeRemoveCharacter("\\)"))
+// .then(makeRemoveCharacter("\\("))
+// .then(makeRemoveCharacter(" "))
+// .then(makeRemoveCharacter("\\n"));
+// .then(makeRemoveCharacter(";"))
+// .then(removeEverythingButAlphanumeric)
+// .then(makeLogIntermediateStep("Bow"))
+// .then(getHashForData)
 
-module.exports = {
+export {
   removeHTMLFromString,
   removeSpecialCharactersFromString,
   removeDataBetweenHTMLTags,
   removeLeadingCapsString,
   removeTrailingCapsString,
   makeRemoveCharacter,
-  getHashForUrl
+  getArticleStringForUrl,
+  compareStrings
 };

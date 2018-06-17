@@ -1,13 +1,20 @@
-// const { getHashForUrl } = require("../client-hash/index.js");
-import { getHashForUrl } from "../client-hash/index.js";
+import { getHashForUrl } from "./client-hash/index.js";
 
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector("#createHash").addEventListener("click", () => {
-    console.log("URL?");
-    console.log("URL?", window.location);
+    document.querySelector("#target").textContent = "Loading...";
 
-    // getHashForUrl().then(() => {
-    //   document.querySelector("#target").textContent = "duuude";
-    // });
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      var url = tabs[0].url;
+      console.log("urL?", url);
+
+      getHashForUrl(url)
+        .then(hash => {
+          document.querySelector("#target").textContent = hash;
+        })
+        .catch(error => {
+          document.querySelector("#target").textContent = error;
+        });
+    });
   });
 });

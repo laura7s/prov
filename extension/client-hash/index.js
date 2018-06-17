@@ -1,4 +1,4 @@
-const { getHashForUrl } = require("./utils");
+import { getArticleStringForUrl, compareStrings } from "./utils.js";
 
 const EXAMPLES = [
   {
@@ -31,23 +31,15 @@ const EXAMPLES = [
   }
 ];
 
-const main = ({ first, second }) =>
-  Promise.all([getHashForUrl(first), getHashForUrl(second)]).then(hashes => {
-    console.log("are the hashes equal ?", hashes[0] === hashes[1]);
-  });
+const compare2Urls = () =>
+  getArticleStringForUrl(EXAMPLES[2].first)
+    .then(string1 => {
+      return getArticleStringForUrl(EXAMPLES[2].second).then(string2 =>
+        compareStrings(string1, string2)
+      );
+    })
+    .catch(error => {
+      console.error(error);
+    });
 
-// main(EXAMPLES[1]);
-// EXAMPLES.map(main);
-// getHashForUrl(
-//   "https://nowcurrentnews.com/british-boy-hospitalized-after-medicinal-cannabis-confiscated/"
-// );
-
-const string1 =
-  "LONDONReutersAnepilepticboyhasbeenhospitalizedinLondondaysaftertheauthoritiesconfiscatedhiscannabisoilmedicationinacasethathasstirreddebateaboutthemedicinaluseoftheillegaldrugBillyCaldwell12hadtraveledtoCanadawithhismotherCharlottetoobtaincannabisoilafterBillysdoctorwasorderedtostopprescribingitbutwhentheyflewbackintoLondoncustomsofficialsconfiscatedtheirsuppliesBillyneedshisconfiscatedantiepilepsymedicationimmediatelyCharlotteCaldwellsaidinastatementShesaidhersonsseizureseachofwhichispotentiallyfatalhadreturnedonTuesdayafterthemedicationwasseizedShesaidthatwhenhewasusingthecannabisoilhewasfreeofseizuresTheHomeOfficeorinteriorministrycouldnotimmediatelybereachedforcommentaboutBillyshospitalizationIthadpreviouslysaidthatwhileitwassympathetictohisplightithadadutytostopbannedsubstancesfromenteringBritainUnderBritishlawcannabisislistedasaschedule1drugmeaningthatitisnotrecognizedashavingatherapeuticvalueSchedule1drugscanbeusedforresearchpurposesandclinicaltrialsbutonlyunderaHomeOfficelicenseTheCaldwellfamilywhonormallyliveinNorthernIrelandhavereceivedsupportfromseveralmembersofparliamentfromdifferentpoliticalpartiesBillyCaldwellhadbeenreceivingmedicinalcannabisoilonprescriptionbyhisfamilydoctorforoverayearbutsuppliesranoutaftertheHomeOfficeorderedthedoctortostopprescribingitReportingbyEstelleShirbonEditingbyRosRussell";
-
-const string2 =
-  "LONDONReutersAnepilepticboyhasbeenhospitalisedinLondondaysaftertheauthoritiesconfiscatedhiscannabisoilmedicationinacasethathasstirreddebateaboutthemedicinaluseoftheillegaldrugBillyCaldwell12hadtravelledtoCanadawithhismotherCharlottetoobtaincannabisoilafterBillysdoctorwasorderedtostopprescribingitbutwhentheyflewbackintoLondoncustomsofficialsconfiscatedtheirsuppliesBillyneedshisconfiscatedantiepilepsymedicationimmediatelyCharlotteCaldwellsaidinastatementShesaidhersonsseizureseachofwhichispotentiallyfatalhadreturnedonTuesdayafterthemedicationwasseizedShesaidthatwhenhewasusingthecannabisoilhewasfreeofseizuresTheHomeOfficeorinteriorministrycouldnotimmediatelybereachedforcommentaboutBillyshospitalisationIthadpreviouslysaidthatwhileitwassympathetictohisplightithadadutytostopbannedsubstancesfromenteringBritainUnderBritishlawcannabisislistedasaschedule1drugmeaningthatitisnotrecognisedashavingatherapeuticvalueSchedule1drugscanbeusedforresearchpurposesandclinicaltrialsbutonlyunderaHomeOfficelicenceTheCaldwellfamilywhonormallyliveinNorthernIrelandhavereceivedsupportfromseveralmembersofparliamentfromdifferentpoliticalpartiesBillyCaldwellhadbeenreceivingmedicinalcannabisoilonprescriptionbyhisfamilydoctorforoverayearbutsuppliesranoutaftertheHomeOfficeorderedthedoctortostopprescribingitReportingbyEstelleShirbonEditingbyRosRussell";
-
-console.log("equal?", string1 === string2);
-
-module.exports = { main, getHashForUrl };
+export { compare2Urls, compareStrings };
