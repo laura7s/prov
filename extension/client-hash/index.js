@@ -1,4 +1,5 @@
 import { getArticleStringForUrl, compareStrings } from "./utils.js";
+import articles from "./articles.js";
 
 const EXAMPLES = [
   {
@@ -42,4 +43,25 @@ const compare2Urls = () =>
       console.error(error);
     });
 
-export { compare2Urls, compareStrings };
+const compareUrlToKnownArticles = url =>
+  getArticleStringForUrl(url).then(articleString => {
+    let results = articles.map(({ title }) => ({ title }));
+    articles.forEach(({ text }, index) => {
+      results[index].score = compareStrings(text, articleString);
+    });
+
+    const maxValue = Math.max(...results.map(o => o.score));
+    console.log("maxValue?", maxValue);
+    console.log("results?", results);
+
+    const titleForMaxValue = results.find(result => result.score === maxValue)
+      .title;
+
+    console.log(
+      "Found max value: " + maxValue + " for article " + titleForMaxValue
+    );
+
+    return { maxValue, titleForMaxValue };
+  });
+
+export { compare2Urls, compareStrings, compareUrlToKnownArticles };

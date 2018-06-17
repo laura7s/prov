@@ -1,7 +1,6 @@
-import "isomorphic-fetch";
+// import "isomorphic-fetch";
 import { sjcl } from "./sjcl.js";
 import { bow, dict } from "./bow.js";
-import { bagOfWords } from "textmining";
 
 const MERCURY_END_POINT = "https://mercury.postlight.com";
 const UNALLOWED_HTML_TAGS = ["figcaption", "damn"];
@@ -110,6 +109,7 @@ const compareStrings = (original, newString) => {
   const bow2 = bow(newString, voc);
   const distance = distanceBetween2Vectors(bow1, bow2);
   console.log("Difference?: ", distance);
+  return distance;
 };
 
 const squareDifference = (a, b) => Math.pow(a - b, 2);
