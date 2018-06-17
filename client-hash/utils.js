@@ -98,6 +98,8 @@ const removeDataBetweenHTMLTags = string =>
 const makeRemoveCharacter = character => string =>
   string.replace(new RegExp("" + character + "", "g"), "");
 
+const removeEverythingButAlphanumeric = string => string.replace(/\W/g, "");
+
 const trimString = string => string.trim();
 
 const getHashForUrl = url =>
@@ -112,12 +114,14 @@ const getHashForUrl = url =>
     .then(removeLeadingCapsString)
     .then(trimString)
     .then(removeTrailingCapsString)
-    .then(makeRemoveCharacter("\\)"))
-    .then(makeRemoveCharacter("\\("))
-    .then(makeRemoveCharacter(" "))
+    // .then(makeRemoveCharacter("\\)"))
+    // .then(makeRemoveCharacter("\\("))
+    // .then(makeRemoveCharacter(" "))
     .then(makeRemoveCharacter("\\n"))
+    // .then(makeRemoveCharacter(";"))
+    .then(removeEverythingButAlphanumeric)
     .then(trimString)
-    // .then(makeLogIntermediateStep("Cleaned text"))
+    .then(makeLogIntermediateStep("Cleaned text"))
     .then(getHashForData)
     .then(hash => {
       console.log("The article hash: ", hash);

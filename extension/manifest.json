@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "Safe News",
+  "description":
+    "Make sure that the news you read is safe and hasn't been tampered with.",
+  "version": "1",
+  "author": "Florian Bienefelt",
+  "browser_action": {
+    "default_icon": "tab-icon.png",
+    "default_title": "Have a good day",
+    "default_popup": "index.html"
+  },
+  // "chrome_url_overrides": {
+  //   "newtab": "index.html"
+  // },
+  "permissions": ["activeTab"]
+}
