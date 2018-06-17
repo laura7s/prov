@@ -1,15 +1,14 @@
 /* eslint-env mocha */
 const expect = require("chai").expect;
 
-const removeHTMLFromString = require("../index.js").removeHTMLFromString;
-const removeSpecialCharactersFromString = require("../index.js")
-  .removeSpecialCharactersFromString;
-const removeDataBetweenHTMLTags = require("../index.js")
-  .removeDataBetweenHTMLTags;
-const removeLeadingCapsString = require("../index.js").removeLeadingCapsString;
-const removeTrailingCapsString = require("../index.js")
-  .removeTrailingCapsString;
-const makeRemoveCharacter = require("../index.js").makeRemoveCharacter;
+const {
+  removeHTMLFromString,
+  removeSpecialCharactersFromString,
+  removeDataBetweenHTMLTags,
+  removeLeadingCapsString,
+  removeTrailingCapsString,
+  makeRemoveCharacter
+} = require("../utils.js");
 
 describe("data cleaners", () => {
   describe("removeHTMLFromString", () => {
@@ -129,6 +128,12 @@ describe("data cleaners", () => {
       ).to.equal(
         "Some dummy text in front of this Cohen has admitted making the payment, but Trump has denied the encounter with Daniels. Reportingby Brendan Pierson in New York; editing by David Gregorio and Grant McCool"
       );
+    });
+
+    it("works for this other edge case", () => {
+      expect(
+        removeTrailingCapsString("editing by David Gregorio and Grant McCool)")
+      ).to.equal("editing by David Gregorio and Grant McCool)");
     });
   });
 
